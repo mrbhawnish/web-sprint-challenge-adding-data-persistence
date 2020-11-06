@@ -1,21 +1,21 @@
 
-exports.up = function(knex) {
-    return knex.schema
-         .createTable('projects', tbl => {
+exports.up = async function(knex) {
+    await knex.schema
+        .createTable('projects', tbl => {
         tbl.increments()
-        tbl.text('name', 255).notNullable()
-        tbl.text('description')
-        tbl.boolean('is_completed').notNullable().defaultTo(false)
+        tbl.string('name').notNullable()
+        tbl.string('description')
+        tbl.boolean('is_completed').defaultTo(false).notNullable()
        })
         .createTable('resources', tbl => {
             tbl.increments()
-            tbl.text('name').notNullable()
-            tbl.text('description')
+            tbl.string('name').notNullable()
+            tbl.string('description')
         })
         .createTable('tasks', tbl => {
             tbl.increments()
-            tbl.text('description').notNullable()
-            tbl.text('notes')
+            tbl.string('description').notNullable()
+            tbl.string('notes')
             tbl.boolean('is_completed').defaultTo(false)
             tbl.integer('project_id')
             .unsigned()
@@ -23,9 +23,10 @@ exports.up = function(knex) {
             .references('id')
             .inTable('projects')
             .onDelete('CASCADE')
-            .onUpdate('CASCADE')
+            .onUpdate('RESTRICT')
         })
         .createTable('projects_resources', tbl => {
+            tbl.increments()
             tbl.integer('project_id')
             .unsigned()
             .notNullable()
@@ -37,16 +38,20 @@ exports.up = function(knex) {
             .unsigned()
             .notNullable()
             .references('id')
-            .inTable('projects')
+            .inTable('resources')
             .onDelete('CASCADE')
             .onUpdate('CASCADE')
             // the combination of the two keys becomes our primary key
             // will enforce unique combinations of ids
-            tbl.primary(['project_id', 'resource_id'])
+            // tbl.primary(['project_id', 'resource_id'])
         })
        
 };
 
 exports.down = function(knex) {
-  
+    return knex.schema
+    .dropTableIfExists('projects_resources')
+    .dropTableIfExists('tasks')
+    .dropTableIfExists('resources')
+    .dropTableIfExists('projects')
 };
