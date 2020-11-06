@@ -41,9 +41,7 @@ exports.up = async function(knex) {
             .inTable('resources')
             .onDelete('CASCADE')
             .onUpdate('CASCADE')
-            // the combination of the two keys becomes our primary key
-            // will enforce unique combinations of ids
-            // tbl.primary(['project_id', 'resource_id'])
+
         })
        
 };

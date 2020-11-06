@@ -11,7 +11,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.post("/", async (req, res) => {
   const newProject = {
     name: req.body.name,
